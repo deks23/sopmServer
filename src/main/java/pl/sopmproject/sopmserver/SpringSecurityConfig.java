@@ -9,7 +9,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers("/**").permitAll().antMatchers("/h2/**").permitAll();
+        httpSecurity.cors().and().headers().frameOptions().sameOrigin().and().csrf().disable().authorizeRequests().antMatchers("/").permitAll().antMatchers("/h2_console/**").permitAll();
     }
 
 

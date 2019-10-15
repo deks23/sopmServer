@@ -12,8 +12,8 @@ import javax.persistence.Table;
 @Table(name="users")
 @Getter @Setter
 public class User {
-    @GeneratedValue
     @Id
+    @GeneratedValue
     private Long id;
     private String username;
     private String password;
