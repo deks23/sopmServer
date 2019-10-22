@@ -20,7 +20,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login")
+    @PostMapping
     public ResponseEntity login(@ModelAttribute UserValidationRequest loginRequest){
         logger.info("Login request: " + loginRequest.getUserName());
 
@@ -33,7 +34,8 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register")
+    @PostMapping
     public ResponseEntity register(@ModelAttribute UserValidationRequest registerRequest){
         logger.info("Register request: " + registerRequest.getUserName());
 

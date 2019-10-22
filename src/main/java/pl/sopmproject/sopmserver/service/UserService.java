@@ -37,7 +37,7 @@ public class UserService {
             return new Response(false);
         }
         Optional<User> userOptional = userRepository.findUserByUsername(userName);
-        if( !userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password) || !securityService.validatePassword(userOptional.get(), password)){
+        if( !userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password)){
             return new Response(false);
         }
         String jwt = securityService.createJWT(userOptional.get());
