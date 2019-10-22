@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.sopmproject.sopmserver.model.User;
+import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.UserRepository;
 
 
@@ -29,8 +29,8 @@ public class UserServiceTest {
         Mockito.when(securityService.getHashedPassword(Mockito.anyString())).thenReturn("hashedPassword");
         Mockito.when(userRepository.existsUserByUsername(Mockito.anyString())).thenReturn(false);
 
-        boolean userRegistered = userService.registerUser("username", "password");
-        Assert.assertTrue(userRegistered);
+        Response response = userService.registerUser("username", "password");
+        Assert.assertTrue(response.isStatus());
     }
 
     @Test
@@ -38,8 +38,8 @@ public class UserServiceTest {
         Mockito.when(securityService.getHashedPassword(Mockito.anyString())).thenReturn("hashedPassword");
         Mockito.when(userRepository.existsUserByUsername(Mockito.anyString())).thenReturn(true);
 
-        boolean userRegistered = userService.registerUser("username", "password");
-        Assert.assertFalse(userRegistered);
+        Response response = userService.registerUser("username", "password");
+        Assert.assertFalse(response.isStatus());
     }
 
     /*User user = new User();

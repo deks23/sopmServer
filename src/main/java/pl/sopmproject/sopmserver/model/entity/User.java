@@ -1,12 +1,10 @@
-package pl.sopmproject.sopmserver.model;
+package pl.sopmproject.sopmserver.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -18,4 +16,6 @@ public class User {
     private String username;
     private String password;
     private boolean loggedIn;
+    @OneToMany(mappedBy = "owner")
+    private List<Vote> votes;
 }

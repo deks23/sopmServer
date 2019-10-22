@@ -4,16 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.sopmproject.sopmserver.controller.UserController;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
-import pl.sopmproject.sopmserver.model.User;
+import pl.sopmproject.sopmserver.model.entity.User;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -53,7 +50,7 @@ public class SecurityService {
     }
 
     public Long getUserIdFromJWT(String jwt) throws JwtParseException {
-        Claims claims = null;
+        Claims claims;
         try{
             claims = Jwts
                     .parser()
