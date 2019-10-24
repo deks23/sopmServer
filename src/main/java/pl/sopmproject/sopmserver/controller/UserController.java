@@ -23,9 +23,9 @@ public class UserController {
     @RequestMapping(value = "/login")
     @PostMapping
     public ResponseEntity login(@ModelAttribute UserValidationRequest loginRequest){
-        logger.info("Login request: " + loginRequest.getUserName());
+        logger.info("Login request: " + loginRequest.getUsername());
 
-        Response response = userService.loginUser(loginRequest.getUserName(), loginRequest.getPassword());
+        Response response = userService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
         if(response.isStatus()){
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else {
@@ -37,9 +37,9 @@ public class UserController {
     @RequestMapping(value = "/register")
     @PostMapping
     public ResponseEntity register(@ModelAttribute UserValidationRequest registerRequest){
-        logger.info("Register request: " + registerRequest.getUserName());
+        logger.info("Register request: " + registerRequest.getUsername());
 
-        Response response = userService.registerUser(registerRequest.getUserName(), registerRequest.getPassword());
+        Response response = userService.registerUser(registerRequest.getUsername(), registerRequest.getPassword());
         if (response.isStatus()) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } else {

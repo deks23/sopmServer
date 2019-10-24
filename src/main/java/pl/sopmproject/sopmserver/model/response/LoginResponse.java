@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginResponse extends Response{
-    private String userName;
+    private String username;
     private String jwt;
 
     public LoginResponse(Boolean status) {

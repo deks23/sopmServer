@@ -21,35 +21,35 @@ public class UserService {
     private SecurityService securityService;
 
     @Transactional
-    public Response registerUser(String userName, CharSequence password){
+    public Response registerUser(String username, CharSequence password){
         Response response = null;
-        if(StringUtils.isBlank(password) || StringUtils.isBlank(userName) || userRepository.existsUserByUsername(userName)){
+        if(StringUtils.isBlank(password) || StringUtils.isBlank(username) || userRepository.existsUserByUsername(username)){
             return new Response(false);
         }
-        User user = createUser(userName, securityService.getHashedPassword(password));
+        User user = createUser(username, securityService.getHashedPassword(password));
         userRepository.save(user);
         response = new Response(true);
         return response;
     }
 
-    public Response loginUser(String userName, CharSequence password){
-        if(StringUtils.isBlank(password) || StringUtils.isBlank(userName)){
+    public Response loginUser(String username, CharSequence password){
+        if(StringUtils.isBlank(password) || StringUtils.isBlank(username)){
             return new Response(false);
         }
-        Optional<User> userOptional = userRepository.findUserByUsername(userName);
+        Optional<User> userOptional = userRepository.findUserByUsername(username);
         if( !userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password)){
             return new Response(false);
         }
         String jwt = securityService.createJWT(userOptional.get());
         LoginResponse loginResponse = new LoginResponse(true);
         loginResponse.setJwt(jwt);
-        loginResponse.setUserName(userName);
+        loginResponse.setUsername(username);
         return loginResponse;
     }
 
-    private User createUser(String userName, CharSequence password) {
+    private User createUser(String username, CharSequence password) {
         User user = new User();
-        user.setUsername(userName);
+        user.setUsername(username);
         user.setPassword(password.toString());
         user.setLoggedIn(false);
         return user;
