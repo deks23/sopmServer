@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.sopmproject.sopmserver.model.request.UserValidationRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
+import pl.sopmproject.sopmserver.service.SecurityService;
 import pl.sopmproject.sopmserver.service.UserService;
 
 
@@ -19,10 +20,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SecurityService securityService;
 
     @RequestMapping(value = "/login")
     @PostMapping
-    public ResponseEntity login(@ModelAttribute UserValidationRequest loginRequest){
+    public ResponseEntity login(@RequestBody UserValidationRequest loginRequest){
         logger.info("Login request: " + loginRequest.getUsername());
 
         Response response = userService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
@@ -36,7 +39,7 @@ public class UserController {
 
     @RequestMapping(value = "/register")
     @PostMapping
-    public ResponseEntity register(@ModelAttribute UserValidationRequest registerRequest){
+    public ResponseEntity register(@RequestBody UserValidationRequest registerRequest){
         logger.info("Register request: " + registerRequest.getUsername());
 
         Response response = userService.registerUser(registerRequest.getUsername(), registerRequest.getPassword());
