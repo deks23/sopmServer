@@ -14,16 +14,18 @@ import pl.sopmproject.sopmserver.service.UserService;
 
 
 @RestController
-@RequestMapping(value = "/user")
 public class UserController {
     private static final Logger logger = LogManager.getLogger(UserController.class);
+    private static final String LOGIN = "/user/login";
+    public static final String REGISTER = "user/register";
+
 
     @Autowired
     private UserService userService;
     @Autowired
     private SecurityService securityService;
 
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = LOGIN)
     @PostMapping
     public ResponseEntity login(@RequestBody UserValidationRequest loginRequest){
         logger.info("Login request: " + loginRequest.getUsername());
@@ -37,7 +39,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/register")
+    @RequestMapping(value = REGISTER)
     @PostMapping
     public ResponseEntity register(@RequestBody UserValidationRequest registerRequest){
         logger.info("Register request: " + registerRequest.getUsername());
