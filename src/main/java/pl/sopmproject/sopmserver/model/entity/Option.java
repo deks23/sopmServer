@@ -16,8 +16,8 @@ public class Option {
     @GeneratedValue
     private Long id;
     @ManyToOne
-    @JoinColumn(name="vote_id")
-    private Vote vote;
+    @JoinColumn(name="survey_id")
+    private Survey vote;
     private String value;
     private LocalDateTime createDate;
     @OneToOne(mappedBy = "option")

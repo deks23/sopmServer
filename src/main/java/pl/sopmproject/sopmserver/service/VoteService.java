@@ -8,7 +8,7 @@ import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.model.entity.Category;
 import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.User;
-import pl.sopmproject.sopmserver.model.entity.Vote;
+import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.response.AddVoteResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.CategoryRepository;
@@ -52,25 +52,25 @@ public class VoteService {
         List<Option> optionList = new ArrayList();
         LocalDateTime now = LocalDateTime.now();
         Category categoryEntity = categoryRepository.getOne(category);
-        Vote vote = createVote(question, latitude, longitude, finishTime, user, optionList, now, categoryEntity);
+        Survey vote = createVote(question, latitude, longitude, finishTime, user, optionList, now, categoryEntity);
         fulfilOptionList(answerOptions, optionList, now, vote);
         persistData(optionList, vote);
         return AddVoteResponse.addVoteResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
-    private void persistData(List<Option> optionList, Vote vote) {
+    private void persistData(List<Option> optionList, Survey vote) {
         optionRepository.saveAll(optionList);
         voteRepository.save(vote);
     }
 
 
-    private Vote createVote(String question,
-                            double latitude,
-                            double longitude,
-                            LocalDateTime finishTime,
-                            User user,
-                            List<Option> optionList, LocalDateTime now, Category categoryEntity) {
-        return Vote.builder()
+    private Survey createVote(String question,
+                              double latitude,
+                              double longitude,
+                              LocalDateTime finishTime,
+                              User user,
+                              List<Option> optionList, LocalDateTime now, Category categoryEntity) {
+        return Survey.builder()
                 .owner(user)
                 .question(question)
                 .finishTime(finishTime)
@@ -83,7 +83,7 @@ public class VoteService {
                 .build();
     }
 
-    private void fulfilOptionList(List<String> answerOptions, List<Option> optionList, LocalDateTime now, Vote vote) {
+    private void fulfilOptionList(List<String> answerOptions, List<Option> optionList, LocalDateTime now, Survey vote) {
         for (String option : answerOptions) {
             Option optionEntity = new Option();
             optionEntity.setValue(option);

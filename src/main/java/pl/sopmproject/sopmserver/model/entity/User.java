@@ -17,5 +17,5 @@ public class User {
     private String password;
     private boolean loggedIn;
     @OneToMany(mappedBy = "owner")
-    private List<Vote> votes;
+    private List<Survey> surveys;
 }
