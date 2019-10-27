@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private SecurityService securityService;
 
-    @Transactional
+
     public Response registerUser(String username, CharSequence password){
         Response response = null;
         if(StringUtils.isBlank(password) || StringUtils.isBlank(username) || userRepository.existsUserByUsername(username)){
@@ -30,7 +30,7 @@ public class UserService {
         }
         User user = createUser(username, securityService.getHashedPassword(password));
         userRepository.save(user);
-        response = Response.builder().status(false).build();
+        response = Response.builder().status(true).build();
         return response;
     }
 
