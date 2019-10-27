@@ -34,7 +34,7 @@ public class UserController {
         if(response.isStatus()){
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 
