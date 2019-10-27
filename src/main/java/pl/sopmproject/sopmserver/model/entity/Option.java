@@ -16,6 +16,7 @@ public class Option {
     @GeneratedValue
     private Long id;
     @ManyToOne
+    @JoinColumn(name="vote_id")
     private Vote vote;
     private String value;
     private LocalDateTime createDate;

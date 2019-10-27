@@ -15,8 +15,10 @@ public class OptionResult {
     @GeneratedValue
     private Long id;
     @ManyToOne
+    @JoinColumn(name="vote_id")
     private Vote vote;
     @OneToOne
+    @JoinColumn(name="option_id")
     private Option option;
     private Long numberOfVotes;
 }
