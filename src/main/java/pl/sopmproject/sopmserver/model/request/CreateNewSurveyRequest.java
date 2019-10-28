@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreateNewVoteRequest {
+public class CreateNewSurveyRequest {
     private String question;
     private List<String> answerOptions;
     private long category;

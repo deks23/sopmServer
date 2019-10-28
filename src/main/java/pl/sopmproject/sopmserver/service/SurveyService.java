@@ -9,19 +9,19 @@ import pl.sopmproject.sopmserver.model.entity.Category;
 import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.entity.Survey;
-import pl.sopmproject.sopmserver.model.response.AddVoteResponse;
+import pl.sopmproject.sopmserver.model.response.AddSurveyResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.CategoryRepository;
 import pl.sopmproject.sopmserver.repository.OptionRepository;
 import pl.sopmproject.sopmserver.repository.UserRepository;
-import pl.sopmproject.sopmserver.repository.VoteRepository;
+import pl.sopmproject.sopmserver.repository.SurveyRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class VoteService {
+public class SurveyService {
 
     @Autowired
     private UserService userService;
@@ -30,12 +30,12 @@ public class VoteService {
     @Autowired
     private OptionRepository optionRepository;
     @Autowired
-    private VoteRepository voteRepository;
+    private SurveyRepository surveyRepository;
     @Autowired
     private CategoryRepository categoryRepository;
 
     @Transactional
-    public Response addNewVote(String jwt,
+    public Response addNewSurvey(String jwt,
                                String question,
                                List<String> answerOptions,
                                long category,
@@ -52,19 +52,19 @@ public class VoteService {
         List<Option> optionList = new ArrayList();
         LocalDateTime now = LocalDateTime.now();
         Category categoryEntity = categoryRepository.getOne(category);
-        Survey vote = createVote(question, latitude, longitude, finishTime, user, optionList, now, categoryEntity);
-        fulfilOptionList(answerOptions, optionList, now, vote);
-        persistData(optionList, vote);
-        return AddVoteResponse.addVoteResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
+        Survey survey = createSurvey(question, latitude, longitude, finishTime, user, optionList, now, categoryEntity);
+        fulfilOptionList(answerOptions, optionList, now, survey);
+        persistData(optionList, survey);
+        return AddSurveyResponse.addSurveyResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
-    private void persistData(List<Option> optionList, Survey vote) {
+    private void persistData(List<Option> optionList, Survey survey) {
         optionRepository.saveAll(optionList);
-        voteRepository.save(vote);
+        surveyRepository.save(survey);
     }
 
 
-    private Survey createVote(String question,
+    private Survey createSurvey(String question,
                               double latitude,
                               double longitude,
                               LocalDateTime finishTime,
@@ -83,11 +83,11 @@ public class VoteService {
                 .build();
     }
 
-    private void fulfilOptionList(List<String> answerOptions, List<Option> optionList, LocalDateTime now, Survey vote) {
+    private void fulfilOptionList(List<String> answerOptions, List<Option> optionList, LocalDateTime now, Survey survey) {
         for (String option : answerOptions) {
             Option optionEntity = new Option();
             optionEntity.setValue(option);
-            optionEntity.setVote(vote);
+            optionEntity.setVote(survey);
             optionEntity.setCreateDate(now);
             optionList.add(optionEntity);
         }
