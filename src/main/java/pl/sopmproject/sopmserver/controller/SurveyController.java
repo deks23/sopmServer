@@ -3,6 +3,7 @@ package pl.sopmproject.sopmserver.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.sopmproject.sopmserver.model.request.CreateNewSurveyRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.service.CategoryService;
 import pl.sopmproject.sopmserver.service.SurveyService;
@@ -15,7 +16,7 @@ import java.util.Map;
 @RestController
 public class SurveyController {
     public static final String GET_All_VOTINGS = "/survey/getAll";
-    public static final String GET_ALL_CATEGORIES = "survey/getCategories";
+    public static final String GET_ALL_CATEGORIES = "/survey/getCategories";
     public static final String ADD_NEW_VOTE = "/survey/addNew";
 
     @Autowired
