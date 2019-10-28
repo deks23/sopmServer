@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class AddVoteResponse extends Response {
+public class AddSurveyResponse extends Response {
 //TODO do ustalenia jakie dane będą potrzebne
-    @Builder(builderMethodName = "addVoteResponseBuilder")
-    public AddVoteResponse(boolean status, String responseMessage, HttpStatus httpStatus) {
+    @Builder(builderMethodName = "addSurveyResponseBuilder")
+    public AddSurveyResponse(boolean status, String responseMessage, HttpStatus httpStatus) {
         super(status, responseMessage, httpStatus);
     }
 }
