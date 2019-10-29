@@ -10,6 +10,7 @@ import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.response.AddSurveyResponse;
+import pl.sopmproject.sopmserver.model.response.GetSurveysResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.CategoryRepository;
 import pl.sopmproject.sopmserver.repository.OptionRepository;
@@ -58,6 +59,26 @@ public class SurveyService {
         return AddSurveyResponse.addSurveyResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
+    public Response getAllActiveSurveys(){
+        List<Survey> surveyList = surveyRepository.getAllActiveSurveys(LocalDateTime.now());
+        if(surveyList.isEmpty()){
+            //TODO use other status?
+            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
+        }else{
+            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
+        }
+    }
+
+    public Response getMostPopularSurveys(){
+        List<Survey> surveyList = surveyRepository.getAllActiveSurveysWithMostAnswers(LocalDateTime.now());
+        if(surveyList.isEmpty()){
+            //TODO use other status?
+            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
+        }else{
+            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
+        }
+    }
+
     private void persistData(List<Option> optionList, Survey survey) {
         optionRepository.saveAll(optionList);
         surveyRepository.save(survey);
@@ -87,7 +108,7 @@ public class SurveyService {
         for (String option : answerOptions) {
             Option optionEntity = new Option();
             optionEntity.setValue(option);
-            optionEntity.setVote(survey);
+            optionEntity.setSurvey(survey);
             optionEntity.setCreateDate(now);
             optionList.add(optionEntity);
         }

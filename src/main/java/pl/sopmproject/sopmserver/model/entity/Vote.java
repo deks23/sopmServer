@@ -20,4 +20,6 @@ public class Vote {
     private Option option;
     private LocalDateTime createDate;
 
+
+
 }

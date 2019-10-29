@@ -1,5 +1,7 @@
 package pl.sopmproject.sopmserver.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,8 +16,10 @@ public class User {
     @GeneratedValue
     private Long id;
     private String username;
+    @JsonIgnore
     private String password;
     private boolean loggedIn;
     @OneToMany(mappedBy = "owner")
+    @JsonManagedReference
     private List<Survey> surveys;
 }
