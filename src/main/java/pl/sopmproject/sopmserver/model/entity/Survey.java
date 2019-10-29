@@ -1,8 +1,9 @@
 package pl.sopmproject.sopmserver.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +12,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "surveys")
 public class Survey {
@@ -19,6 +22,7 @@ public class Survey {
     private Long id;
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonBackReference
     private User owner;
     private String question;
     private LocalDateTime finishTime;
@@ -30,6 +34,7 @@ public class Survey {
     private long counter;
     private LocalDateTime createDate;
     @OneToMany
+    @JsonManagedReference
     private List<Option>options;
     @OneToMany
     private List<Vote>answers;

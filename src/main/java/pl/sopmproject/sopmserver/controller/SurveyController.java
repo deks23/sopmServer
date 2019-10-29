@@ -15,9 +15,10 @@ import java.util.Map;
 
 @RestController
 public class SurveyController {
-    public static final String GET_All_VOTINGS = "/survey/getAll";
+    public static final String GET_All_ACTIVE_SURVEYS = "/survey/getAll";
     public static final String GET_ALL_CATEGORIES = "/survey/getCategories";
     public static final String ADD_NEW_VOTE = "/survey/addNew";
+    public static final String GET_MOST_POPULAR = "/survey/getMostPopular";
 
     @Autowired
     private SurveyService surveyService;
@@ -41,6 +42,20 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity getCategories(){
         Response response = categoryService.getCategories();
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @RequestMapping(value = GET_All_ACTIVE_SURVEYS)
+    @GetMapping
+    public ResponseEntity getAll(){
+        Response response = surveyService.getAllActiveSurveys();
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @RequestMapping(value = GET_MOST_POPULAR)
+    @GetMapping
+    public ResponseEntity getMostPopular(){
+        Response response = surveyService.getMostPopularSurveys();
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 

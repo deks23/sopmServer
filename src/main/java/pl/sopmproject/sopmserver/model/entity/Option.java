@@ -1,6 +1,8 @@
 package pl.sopmproject.sopmserver.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +19,11 @@ public class Option {
     private Long id;
     @ManyToOne
     @JoinColumn(name="survey_id")
-    private Survey vote;
+    @JsonBackReference
+    private Survey survey;
     private String value;
     private LocalDateTime createDate;
     @OneToOne(mappedBy = "option")
     private OptionResult result;
+
 }
