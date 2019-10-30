@@ -17,4 +17,6 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     @Query(value = "SELECT s FROM Survey s WHERE s.finishTime > ?1 ORDER BY s.counter DESC")
     public List<Survey> getAllActiveSurveysWithMostAnswers(LocalDateTime now);
 
+    @Query(value = "SELECT s FROM Survey s WHERE s.id = ?1")
+    public Survey findById(int surveyId);
 }
