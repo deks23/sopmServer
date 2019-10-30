@@ -5,9 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
-import pl.sopmproject.sopmserver.exception.SurveyNotFoundException;
+import pl.sopmproject.sopmserver.exception.SurveyEndedException;
 import pl.sopmproject.sopmserver.exception.OptionNotFoundException;
-import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.entity.Vote;
@@ -22,16 +21,13 @@ public class VoteService {
     @Autowired
     private UserService userService;
     @Autowired
-    private SurveyService surveyService;
-    @Autowired
     private VoteRepository voteRepository;
     @Autowired
     private OptionService optionService;
 
     @Transactional
     public Response addNewVote(String jwt,
-                                 int surveyId,
-                                 int optionId) {
+                                 int optionId) throws SurveyEndedException {
         User user = null;
         try {
             user = userService.getUser(jwt);
@@ -39,33 +35,28 @@ public class VoteService {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
 
-        Survey survey = null;
-        try {
-            survey = surveyService.findSurvey(surveyId);
-        } catch (SurveyNotFoundException e) {
-            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
-        }
-
         Option option = null;
         try {
-            option = optionService.findOption(surveyId, optionId);
+            option = optionService.findOption(optionId);
         } catch (OptionNotFoundException e) {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
 
         LocalDateTime now = LocalDateTime.now();
-        Vote vote = createVote(survey, option, now, user);
+
+        if (option.getSurvey().getFinishTime().isAfter(now)) {
+            throw new SurveyEndedException;
+        }
+        Vote vote = createVote(option, now, user);
         persistData(vote);
         return CreateNewVoteResponse.addVoteResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
-    private Vote createVote(Survey survey,
-                                Option option,
+    private Vote createVote(Option option,
                                 LocalDateTime createDate,
                                 User user) {
         return Vote.builder()
-                .owner(user)
-                .survey(survey)
+                .user(user)
                 .option(option)
                 .createDate(createDate)
                 .build();

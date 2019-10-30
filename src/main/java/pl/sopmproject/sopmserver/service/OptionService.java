@@ -28,8 +28,8 @@ public class OptionService {
     @Autowired
     private OptionRepository optionRepository;
 
-    public Option findOption(int surveyId, int optionId) throws OptionNotFoundException {
-        Option option = optionRepository.findById(surveyId, optionId);
+    public Option findOption(int optionId) throws OptionNotFoundException {
+        Option option = optionRepository.findById(optionId);
         if(option == null){
             throw new OptionNotFoundException();
         }else{

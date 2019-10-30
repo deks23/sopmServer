@@ -17,7 +17,6 @@ public class Vote {
     @ManyToOne
     private User user;
     @ManyToOne
-    private Survey survey;
     private Option option;
     private LocalDateTime createDate;
 
