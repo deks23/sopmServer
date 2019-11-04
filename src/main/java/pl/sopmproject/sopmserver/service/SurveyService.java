@@ -81,6 +81,18 @@ public class SurveyService {
         }
     }
 
+    public Response getSurveyById(Long surveyId){
+        Optional<Survey> survey = surveyRepository.findById(surveyId);
+        List<Survey> surveyList = new ArrayList<>();
+        if(!survey.isPresent()){
+            //TODO use other status?
+            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
+        }else{
+            surveyList.add(survey.get());
+            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
+        }
+    }
+
     private void persistData(List<Option> optionList, Survey survey) {
         optionRepository.saveAll(optionList);
         surveyRepository.save(survey);
