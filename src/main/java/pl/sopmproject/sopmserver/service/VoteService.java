@@ -44,8 +44,8 @@ public class VoteService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (option.getSurvey().getFinishTime().isAfter(now)) {
-            throw new SurveyEndedException;
+        if (option.getSurvey().getFinishTime().isBefore(now)) {
+            throw new SurveyEndedException();
         }
         Vote vote = createVote(option, now, user);
         persistData(vote);

@@ -29,11 +29,11 @@ public class OptionService {
     private OptionRepository optionRepository;
 
     public Option findOption(int optionId) throws OptionNotFoundException {
-        Option option = optionRepository.findById(optionId);
-        if(option == null){
+        Optional<Option> option = optionRepository.findById(optionId);
+        if(!option.isPresent()){
             throw new OptionNotFoundException();
         }else{
-            return option;
+            return option.get();
         }
     }
 }

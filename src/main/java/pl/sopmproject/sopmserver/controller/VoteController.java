@@ -22,11 +22,12 @@ public class VoteController {
     @RequestMapping(value = CREATE_VOTE)
     @PostMapping
     public ResponseEntity addNew(@RequestHeader Map<String, String> headers, @RequestBody CreateNewVoteRequest request){
+        Response response = null;
         try {
-            Response response = voteService.addNewVote(headers.get("jwt"),
+           response = voteService.addNewVote(headers.get("jwt"),
                     request.getOptionId());
             return ResponseEntity.status(response.getHttpStatus()).body(response);
-        } catch (SurveyEndedException) {
+        } catch (SurveyEndedException e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
         }
     }
