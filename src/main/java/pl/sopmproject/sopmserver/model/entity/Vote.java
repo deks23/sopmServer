@@ -1,5 +1,6 @@
 package pl.sopmproject.sopmserver.model.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "answers")
 @Getter
 @Setter
+@Builder
 public class Vote {
     @Id
     @GeneratedValue

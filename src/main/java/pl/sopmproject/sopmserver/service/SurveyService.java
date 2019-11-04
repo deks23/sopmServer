@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
+import pl.sopmproject.sopmserver.exception.SurveyNotFoundException;
 import pl.sopmproject.sopmserver.model.entity.Category;
 import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.User;
@@ -20,6 +21,7 @@ import pl.sopmproject.sopmserver.repository.SurveyRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SurveyService {
@@ -111,6 +113,15 @@ public class SurveyService {
             optionEntity.setSurvey(survey);
             optionEntity.setCreateDate(now);
             optionList.add(optionEntity);
+        }
+    }
+
+    public Survey findSurvey(int surveyId) throws SurveyNotFoundException {
+        Survey survey = surveyRepository.findById(surveyId);
+        if(survey == null){
+            throw new SurveyNotFoundException();
+        }else{
+            return survey;
         }
     }
 
