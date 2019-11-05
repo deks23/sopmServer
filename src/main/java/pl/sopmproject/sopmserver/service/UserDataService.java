@@ -18,7 +18,7 @@ public class UserDataService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean checkIfAdditionalDataPresent(User user) {
+    public boolean checkIfAdditionalDataNotPresent(User user) {
         return (isBlank(user.getGender()) || user.getAge() == 0);
     }
 
