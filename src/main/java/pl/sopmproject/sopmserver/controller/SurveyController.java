@@ -1,10 +1,12 @@
 package pl.sopmproject.sopmserver.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.sopmproject.sopmserver.model.request.CreateNewSurveyRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
+import pl.sopmproject.sopmserver.model.util.Constants;
 import pl.sopmproject.sopmserver.service.CategoryService;
 import pl.sopmproject.sopmserver.service.SurveyService;
 
@@ -15,20 +17,26 @@ import java.util.Map;
 
 @RestController
 public class SurveyController {
-    public static final String GET_All_ACTIVE_SURVEYS = "/survey/getAll";
-    public static final String GET_ALL_CATEGORIES = "/survey/getCategories";
-    public static final String ADD_NEW_VOTE = "/survey/addNew";
-    public static final String GET_MOST_POPULAR = "/survey/getMostPopular";
+    private static final String GET_ALL_ACTIVE_SURVEYS = "/survey/getAll";
+    private static final String GET_ALL_CATEGORIES = "/survey/getCategories";
+    private static final String ADD_NEW_SURVEY = "/survey/addNew";
+    private static final String GET_MOST_POPULAR = "/survey/getMostPopular";
+    private static final String GET_SURVEY_BY_ID = "/survey/get/{surveyId}";
 
     @Autowired
     private SurveyService surveyService;
     @Autowired
     private CategoryService categoryService;
 
-    @RequestMapping(value = ADD_NEW_VOTE)
+    @RequestMapping(value = ADD_NEW_SURVEY)
     @PostMapping
     public ResponseEntity addNew(@RequestHeader Map<String, String> headers, @RequestBody CreateNewSurveyRequest request){
-        Response response = surveyService.addNewSurvey(headers.get("jwt"),
+        if(!headers.containsKey(Constants.JWT)){
+            Response response = Response.builder().status(false).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        Response response = surveyService.addNewSurvey(headers.get(Constants.JWT),
                 request.getQuestion(),
                 request.getAnswerOptions(),
                 request.getCategory(),
@@ -45,7 +53,7 @@ public class SurveyController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
-    @RequestMapping(value = GET_All_ACTIVE_SURVEYS)
+    @RequestMapping(value = GET_ALL_ACTIVE_SURVEYS)
     @GetMapping
     public ResponseEntity getAll(){
         Response response = surveyService.getAllActiveSurveys();
@@ -59,4 +67,10 @@ public class SurveyController {
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
+    @RequestMapping(value = GET_SURVEY_BY_ID)
+    @GetMapping
+    public ResponseEntity getSurveyById(@PathVariable(value = "surveyId") Long surveyId){
+        Response response = surveyService.getSurveyById(surveyId);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
 }

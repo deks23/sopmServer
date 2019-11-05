@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.sopmproject.sopmserver.exception.SurveyEndedException;
 import pl.sopmproject.sopmserver.model.request.CreateNewVoteRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
+import pl.sopmproject.sopmserver.model.util.Constants;
 import pl.sopmproject.sopmserver.service.SurveyService;
 import pl.sopmproject.sopmserver.service.VoteService;
 
@@ -23,8 +24,12 @@ public class VoteController {
     @PostMapping
     public ResponseEntity addNew(@RequestHeader Map<String, String> headers, @RequestBody CreateNewVoteRequest request){
         Response response = null;
+        if(!headers.containsKey(Constants.JWT)){
+            response = Response.builder().status(false).responseMessage(Constants.TOKEN_NOT_PRESENT).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
         try {
-           response = voteService.addNewVote(headers.get("jwt"),
+           response = voteService.addNewVote(headers.get(Constants.JWT),
                     request.getOptionId());
             return ResponseEntity.status(response.getHttpStatus()).body(response);
         } catch (SurveyEndedException e) {

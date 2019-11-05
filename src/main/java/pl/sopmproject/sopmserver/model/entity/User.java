@@ -22,4 +22,6 @@ public class User {
     @OneToMany(mappedBy = "owner")
     @JsonManagedReference
     private List<Survey> surveys;
+    private String gender;
+    private int age;
 }
