@@ -43,7 +43,7 @@ public class UserService {
         if( !userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password)){
             return Response.builder().status(false).build();
         }
-        boolean needData = !userDataService.checkIfAdditionalDataPresent(userOptional.get());
+        boolean needData = userDataService.checkIfAdditionalDataNotPresent(userOptional.get());
         String jwt = securityService.createJWT(userOptional.get());
         return LoginResponse.loginBuilder()
                 .status(true)
