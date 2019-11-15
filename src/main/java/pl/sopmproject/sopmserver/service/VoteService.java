@@ -8,10 +8,12 @@ import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.exception.SurveyEndedException;
 import pl.sopmproject.sopmserver.exception.OptionNotFoundException;
 import pl.sopmproject.sopmserver.model.entity.Option;
+import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.entity.Vote;
 import pl.sopmproject.sopmserver.model.response.CreateNewVoteResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
+import pl.sopmproject.sopmserver.repository.SurveyRepository;
 import pl.sopmproject.sopmserver.repository.VoteRepository;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,8 @@ public class VoteService {
     private VoteRepository voteRepository;
     @Autowired
     private OptionService optionService;
+    @Autowired
+    private SurveyRepository surveyRepository;
 
     @Transactional
     public Response addNewVote(String jwt,
@@ -48,7 +52,11 @@ public class VoteService {
             throw new SurveyEndedException();
         }
         Vote vote = createVote(option, now, user);
-        persistData(vote);
+        Survey survey = vote.getOption().getSurvey();
+        Long counter = survey.getCounter();
+        survey.setCounter(counter++);
+        survey.getAnswers().add(vote);
+        persistData(vote, survey);
         return CreateNewVoteResponse.addVoteResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
@@ -62,8 +70,9 @@ public class VoteService {
                 .build();
     }
 
-    private void persistData(Vote vote) {
+    private void persistData(Vote vote, Survey survey) {
         voteRepository.save(vote);
+        surveyRepository.save(survey);
     }
 
 }
