@@ -18,9 +18,10 @@ public class User {
     private String username;
     @JsonIgnore
     private String password;
+    @JsonIgnore
     private boolean loggedIn;
     @OneToMany(mappedBy = "owner")
-    @JsonManagedReference
+    @JsonIgnore
     private List<Survey> surveys;
     private String gender;
     private int age;

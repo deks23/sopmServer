@@ -22,7 +22,6 @@ public class Survey {
     private Long id;
     @ManyToOne
     @JoinColumn(name="user_id")
-    @JsonBackReference
     private User owner;
     private String question;
     private LocalDateTime finishTime;
@@ -34,7 +33,6 @@ public class Survey {
     private long counter;
     private LocalDateTime createDate;
     @OneToMany
-    @JsonManagedReference
     private List<Option>options;
     @OneToMany
     private List<Vote>answers;

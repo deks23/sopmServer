@@ -19,7 +19,7 @@ public class Option {
     private Long id;
     @ManyToOne
     @JoinColumn(name="survey_id")
-    @JsonBackReference
+    @JsonIgnore
     private Survey survey;
     private String value;
     private LocalDateTime createDate;

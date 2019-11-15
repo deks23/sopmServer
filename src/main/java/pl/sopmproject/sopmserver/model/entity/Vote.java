@@ -1,8 +1,6 @@
 package pl.sopmproject.sopmserver.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Vote {
     @Id
     @GeneratedValue
@@ -21,7 +21,4 @@ public class Vote {
     @ManyToOne
     private Option option;
     private LocalDateTime createDate;
-
-
-
 }
