@@ -97,16 +97,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
-    <dependency> 
-      <groupId>com.microsoft.azure</groupId>  
-      <artifactId>applicationinsights-spring-boot-starter</artifactId>  
-      <version>1.1.1</version> 
-    </dependency>  
-    <dependency> 
-      <groupId>com.microsoft.azure</groupId>  
-      <artifactId>applicationinsights-logging-log4j2</artifactId>  
-      <version>2.1.1</version> 
-    </dependency>
+
 
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
@@ -139,58 +130,7 @@
             -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
           </jvmArguments>
         </configuration>
-      </plugin>  
-
-      <plugin> 
-        <groupId>com.microsoft.azure</groupId>  
-        <artifactId>azure-webapp-maven-plugin</artifactId>  
-        <version>1.6.0</version>  
-        <dependencies> 
-          <dependency> 
-            <groupId>javax.xml.bind</groupId>  
-            <artifactId>jaxb-api</artifactId>  
-            <version>2.3.0</version> 
-          </dependency>  
-          <dependency> 
-            <groupId>com.sun.xml.bind</groupId>  
-            <artifactId>jaxb-core</artifactId>  
-            <version>2.2.7</version> 
-          </dependency>  
-          <dependency> 
-            <groupId>com.sun.xml.bind</groupId>  
-            <artifactId>jaxb-impl</artifactId>  
-            <version>2.2.7</version> 
-          </dependency> 
-        </dependencies>  
-        <configuration>
-          <schemaVersion>V2</schemaVersion>
-          <resourceGroup>sopmserver-1570770804879-rg</resourceGroup>
-          <appName>sopmr-webservices</appName>
-          <region>westeurope</region>
-          <pricingTier>P1V2</pricingTier>
-          <runtime>
-            <os>linux</os>
-            <javaVersion>jre8</javaVersion>
-            <webContainer>jre8</webContainer>
-          </runtime>
-          <deployment>
-            <resources>
-              <resource>
-                <directory>${project.basedir}/target</directory>
-                <includes>
-                  <include>*.jar</include>
-                </includes>
-              </resource>
-            </resources>
-          </deployment>
-          <appSettings>
-            <property>
-              <name>JAVA_OPTS</name>
-              <value>-Dserver.port=80</value>
-            </property>
-          </appSettings>
-        </configuration>
-      </plugin> 
+      </plugin>
     </plugins> 
   </build> 
 </project>
