@@ -1,3 +1,5 @@
+===0.3.1
+    -fixed LocalDateTime issues
 ===0.3
     -changed user age to birthDate
 ===0.2
