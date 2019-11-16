@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UpdateDataRequest {
-    private LocalDateTime birthDate;
+    private LocalDateTime birthday;
     private String gender;
 }
