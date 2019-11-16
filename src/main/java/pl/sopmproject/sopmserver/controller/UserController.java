@@ -14,6 +14,7 @@ import pl.sopmproject.sopmserver.model.util.Constants;
 import pl.sopmproject.sopmserver.service.SecurityService;
 import pl.sopmproject.sopmserver.service.UserDataService;
 import pl.sopmproject.sopmserver.service.UserService;
+import pl.sopmproject.sopmserver.util.DateConverter;
 
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
         String jwt = headers.get(Constants.JWT);
-        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), updateDataRequest.getBirthday());
+        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), DateConverter.jodaToJavaTime(updateDataRequest.getBirthday()));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }
