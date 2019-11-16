@@ -2,8 +2,9 @@ package pl.sopmproject.sopmserver.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.joda.time.LocalDateTime;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 
 @Getter

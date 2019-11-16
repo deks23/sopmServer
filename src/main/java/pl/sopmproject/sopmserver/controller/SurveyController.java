@@ -11,6 +11,7 @@ import pl.sopmproject.sopmserver.model.util.Constants;
 import pl.sopmproject.sopmserver.repository.SurveyRepository;
 import pl.sopmproject.sopmserver.service.CategoryService;
 import pl.sopmproject.sopmserver.service.SurveyService;
+import pl.sopmproject.sopmserver.util.DateConverter;
 
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class SurveyController {
                 request.getCategory(),
                 request.getLongitude(),
                 request.getLatitude(),
-                request.getFinishTime()
+                DateConverter.jodaToJavaTime(request.getFinishTime())
         );
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
