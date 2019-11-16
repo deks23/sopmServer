@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
-import pl.sopmproject.sopmserver.exception.SurveyEndedException;
 import pl.sopmproject.sopmserver.exception.OptionNotFoundException;
+import pl.sopmproject.sopmserver.exception.SurveyEndedException;
 import pl.sopmproject.sopmserver.model.entity.Option;
 import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.entity.User;
@@ -30,8 +30,10 @@ public class VoteService {
     private SurveyRepository surveyRepository;
 
     @Transactional
-    public Response addNewVote(String jwt,
-                                 int optionId) throws SurveyEndedException {
+    public Response addNewVote(
+            String jwt,
+            int optionId
+    ) throws SurveyEndedException {
         User user = null;
         try {
             user = userService.getUser(jwt);
@@ -60,9 +62,11 @@ public class VoteService {
         return CreateNewVoteResponse.addVoteResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
     }
 
-    private Vote createVote(Option option,
-                                LocalDateTime createDate,
-                                User user) {
+    private Vote createVote(
+            Option option,
+            LocalDateTime createDate,
+            User user
+    ) {
         return Vote.builder()
                 .user(user)
                 .option(option)

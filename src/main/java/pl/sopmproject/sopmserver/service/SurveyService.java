@@ -8,15 +8,15 @@ import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.exception.SurveyNotFoundException;
 import pl.sopmproject.sopmserver.model.entity.Category;
 import pl.sopmproject.sopmserver.model.entity.Option;
-import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.entity.Survey;
+import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.response.AddSurveyResponse;
 import pl.sopmproject.sopmserver.model.response.GetSurveysResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.CategoryRepository;
 import pl.sopmproject.sopmserver.repository.OptionRepository;
-import pl.sopmproject.sopmserver.repository.UserRepository;
 import pl.sopmproject.sopmserver.repository.SurveyRepository;
+import pl.sopmproject.sopmserver.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,13 +38,14 @@ public class SurveyService {
     private CategoryRepository categoryRepository;
 
     @Transactional
-    public Response addNewSurvey(String jwt,
-                               String question,
-                               List<String> answerOptions,
-                               long category,
-                               double latitude,
-                               double longitude,
-                               LocalDateTime finishTime) {
+    public Response addNewSurvey(
+            String jwt,
+            String question,
+            List<String> answerOptions,
+            long category,
+            double latitude,
+            double longitude,
+            LocalDateTime finishTime) {
         User user = null;
         try {
             user = userService.getUser(jwt);
@@ -63,34 +64,33 @@ public class SurveyService {
 
     public Response getAllActiveSurveys(){
         List<Survey> surveyList = surveyRepository.getAllActiveSurveys(LocalDateTime.now());
-        if(surveyList.isEmpty()){
-            //TODO use other status?
-            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
-        }else{
-            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
-        }
+        return generateResponse(surveyList);
     }
 
     public Response getMostPopularSurveys(){
         List<Survey> surveyList = surveyRepository.getAllActiveSurveysWithMostAnswers(LocalDateTime.now());
-        if(surveyList.isEmpty()){
-            //TODO use other status?
+        return generateResponse(surveyList);
+    }
+
+    public Response getSurveyById(Long surveyId) {
+        Optional<Survey> survey = surveyRepository.findById(surveyId);
+        List<Survey> surveyList = new ArrayList<>();
+        if (!survey.isPresent()) {
             return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
-        }else{
-            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
+        } else {
+            surveyList.add(survey.get());
+            return GetSurveysResponse
+                    .getSurveysResponseBuilder()
+                    .httpStatus(HttpStatus.OK)
+                    .status(true)
+                    .surveyList(surveyList)
+                    .build();
         }
     }
 
-    public Response getSurveyById(Long surveyId){
-        Optional<Survey> survey = surveyRepository.findById(surveyId);
-        List<Survey> surveyList = new ArrayList<>();
-        if(!survey.isPresent()){
-            //TODO use other status?
-            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
-        }else{
-            surveyList.add(survey.get());
-            return GetSurveysResponse.getSurveysResponseBuilder().httpStatus(HttpStatus.OK).status(true).surveyList(surveyList).build();
-        }
+    public Response getSurveysFromNeighborhood(double radius, double longitude, double latitude){
+        List<Survey> surveyList = surveyRepository.getSurveysFromNeighborhood(radius, longitude, latitude, LocalDateTime.now());
+        return generateResponse(surveyList);
     }
 
     private void persistData(List<Option> optionList, Survey survey) {
@@ -98,13 +98,27 @@ public class SurveyService {
         surveyRepository.save(survey);
     }
 
+    private Response generateResponse(List<Survey> surveyList) {
+        if (surveyList.isEmpty()) {
+            return Response.builder().status(false).httpStatus(HttpStatus.OK).build();
+        } else {
+            return GetSurveysResponse
+                    .getSurveysResponseBuilder()
+                    .httpStatus(HttpStatus.OK)
+                    .status(true)
+                    .surveyList(surveyList)
+                    .build();
+        }
+    }
 
-    private Survey createSurvey(String question,
-                              double latitude,
-                              double longitude,
-                              LocalDateTime finishTime,
-                              User user,
-                              List<Option> optionList, LocalDateTime now, Category categoryEntity) {
+    private Survey createSurvey(
+            String question,
+            double latitude,
+            double longitude,
+            LocalDateTime finishTime,
+            User user,
+            List<Option> optionList, LocalDateTime now, Category categoryEntity
+    ) {
         return Survey.builder()
                 .owner(user)
                 .question(question)
@@ -118,7 +132,12 @@ public class SurveyService {
                 .build();
     }
 
-    private void fulfilOptionList(List<String> answerOptions, List<Option> optionList, LocalDateTime now, Survey survey) {
+    private void fulfilOptionList(
+            List<String> answerOptions,
+            List<Option> optionList,
+            LocalDateTime now,
+            Survey survey
+    ) {
         for (String option : answerOptions) {
             Option optionEntity = new Option();
             optionEntity.setValue(option);

@@ -63,7 +63,10 @@ public class UserController {
 
     @RequestMapping(value = UPDATE_DATA)
     @PostMapping
-    public ResponseEntity updateUserData(@RequestHeader Map<String, String> headers, @RequestBody UpdateDataRequest updateDataRequest){
+    public ResponseEntity updateUserData(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody UpdateDataRequest updateDataRequest
+    ) {
         Response response = null;
         if (!headers.containsKey(Constants.JWT)) {
             response = Response.builder().status(false).responseMessage(Constants.TOKEN_NOT_PRESENT).build();
