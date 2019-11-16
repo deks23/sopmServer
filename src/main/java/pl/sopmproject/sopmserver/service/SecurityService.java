@@ -4,22 +4,27 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.sopmproject.sopmserver.controller.UserController;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.model.entity.User;
+import pl.sopmproject.sopmserver.model.util.Constants;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.naming.directory.SearchControls;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
 @Service
 public class SecurityService {
-
+    private static final Logger logger = LogManager.getLogger(SecurityService.class);
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -57,6 +62,7 @@ public class SecurityService {
                     .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
                     .parseClaimsJws(jwt).getBody();
         }catch (Exception e){
+            logger.warn(Constants.INVALID_TOKEN);
             throw new JwtParseException();
         }
         return Long.valueOf(claims.getId());

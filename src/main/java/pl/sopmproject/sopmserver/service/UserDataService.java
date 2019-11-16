@@ -8,6 +8,8 @@ import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.repository.UserRepository;
 
+import java.time.LocalDateTime;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -19,18 +21,18 @@ public class UserDataService {
     private UserRepository userRepository;
 
     public boolean checkIfAdditionalDataNotPresent(User user) {
-        return (isBlank(user.getGender()) || user.getAge() == 0);
+        return (isBlank(user.getGender()) || user.getBirthDate() == null);
     }
 
-    public Response updateUserData(String jwt, String gender, int age) {
+    public Response updateUserData(String jwt, String gender, LocalDateTime birthDate) {
         User user = null;
         try {
             user = userService.getUser(jwt);
         } catch (JwtParseException e) {
             return Response.builder().status(false).httpStatus(HttpStatus.UNAUTHORIZED).build();
         }
-        if (age > 0) {
-            user.setAge(age);
+        if (birthDate !=null) {
+            user.setBirthDate(birthDate);
         }
         if (isNotBlank(gender)) {
             user.setGender(gender);

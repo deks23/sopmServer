@@ -69,7 +69,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
         String jwt = headers.get(Constants.JWT);
-        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), updateDataRequest.getAge());
+        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), updateDataRequest.getBirthDate());
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }
