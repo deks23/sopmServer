@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.sopmproject.sopmserver.controller.UserController;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.response.LoginResponse;
@@ -30,9 +29,9 @@ public class UserService {
     @Autowired
     private UserDataService userDataService;
 
-    public Response registerUser(String username, CharSequence password){
+    public Response registerUser(String username, CharSequence password) {
         Response response = null;
-        if(isBlank(password) || isBlank(username) || userRepository.existsUserByUsername(username)){
+        if (isBlank(password) || isBlank(username) || userRepository.existsUserByUsername(username)) {
             logger.warn(Constants.INVALID_REGISTER_CREDENTIALS);
             return Response.builder().status(false).build();
         }
@@ -42,13 +41,13 @@ public class UserService {
         return response;
     }
 
-    public Response loginUser(String username, CharSequence password){
-        if(isBlank(password) || isBlank(username)){
+    public Response loginUser(String username, CharSequence password) {
+        if (isBlank(password) || isBlank(username)) {
             logger.warn(Constants.BLANK_LOGIN_CREDENTIALS);
             return Response.builder().status(false).build();
         }
         Optional<User> userOptional = userRepository.findUserByUsername(username);
-        if( !userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password)){
+        if (!userOptional.isPresent() || !securityService.validatePassword(userOptional.get(), password)) {
             logger.warn(Constants.INVALID_LOGIN_CREDENTIALS);
             return Response.builder().status(false).build();
         }
@@ -65,10 +64,10 @@ public class UserService {
     public User getUser(String jwt) throws JwtParseException {
         Long userId = securityService.getUserIdFromJWT(jwt);
         Optional<User> user = userRepository.findById(userId);
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             logger.warn(Constants.USER_NOT_FOUND + userId);
             throw new JwtParseException();
-        }else{
+        } else {
             return user.get();
         }
     }

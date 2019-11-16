@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.sopmproject.sopmserver.controller.UserController;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.model.entity.User;
 import pl.sopmproject.sopmserver.model.util.Constants;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.naming.directory.SearchControls;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
@@ -37,7 +35,7 @@ public class SecurityService {
         return new BCryptPasswordEncoder();
     }
 
-    public String createJWT(User user){
+    public String createJWT(User user) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
@@ -56,12 +54,12 @@ public class SecurityService {
 
     public Long getUserIdFromJWT(String jwt) throws JwtParseException {
         Claims claims;
-        try{
+        try {
             claims = Jwts
                     .parser()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
                     .parseClaimsJws(jwt).getBody();
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.warn(Constants.INVALID_TOKEN);
             throw new JwtParseException();
         }

@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.sopmproject.sopmserver.model.request.CreateNewSurveyRequest;
+import pl.sopmproject.sopmserver.model.request.GetSurveysFromNeighborhoodRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
 import pl.sopmproject.sopmserver.model.util.Constants;
+import pl.sopmproject.sopmserver.repository.SurveyRepository;
 import pl.sopmproject.sopmserver.service.CategoryService;
 import pl.sopmproject.sopmserver.service.SurveyService;
 
@@ -22,27 +24,35 @@ public class SurveyController {
     private static final String ADD_NEW_SURVEY = "/survey/addNew";
     private static final String GET_MOST_POPULAR = "/survey/getMostPopular";
     private static final String GET_SURVEY_BY_ID = "/survey/get/{surveyId}";
+    private static final String GET_FROM_NEIGHBORHOOD = "/survey/getFromNeighborhood";
 
     @Autowired
     private SurveyService surveyService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private SurveyRepository surveyRepository;
 
     @RequestMapping(value = ADD_NEW_SURVEY)
     @PostMapping
-    public ResponseEntity addNew(@RequestHeader Map<String, String> headers, @RequestBody CreateNewSurveyRequest request){
-        if(!headers.containsKey(Constants.JWT)){
+    public ResponseEntity addNew(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody CreateNewSurveyRequest request
+    ) {
+        if (!headers.containsKey(Constants.JWT)) {
             Response response = Response.builder().status(false).build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        Response response = surveyService.addNewSurvey(headers.get(Constants.JWT),
+        Response response = surveyService.addNewSurvey(
+                headers.get(Constants.JWT),
                 request.getQuestion(),
                 request.getAnswerOptions(),
                 request.getCategory(),
                 request.getLongitude(),
                 request.getLatitude(),
-                request.getFinishTime());
+                request.getFinishTime()
+        );
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
@@ -71,6 +81,16 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity getSurveyById(@PathVariable(value = "surveyId") Long surveyId){
         Response response = surveyService.getSurveyById(surveyId);
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @RequestMapping(value = GET_FROM_NEIGHBORHOOD)
+    @PostMapping
+    public ResponseEntity getSurveyById(@RequestBody GetSurveysFromNeighborhoodRequest request) {
+        Response response = surveyService.getSurveysFromNeighborhood(
+                request.getRadius(),
+                request.getLongitude(),
+                request.getLatitude());
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }

@@ -31,7 +31,7 @@ public class UserDataService {
         } catch (JwtParseException e) {
             return Response.builder().status(false).httpStatus(HttpStatus.UNAUTHORIZED).build();
         }
-        if (birthDate !=null) {
+        if (birthDate != null) {
             user.setBirthDate(birthDate);
         }
         if (isNotBlank(gender)) {
