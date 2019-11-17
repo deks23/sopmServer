@@ -26,4 +26,6 @@ public class User {
     private List<Survey> surveys;
     private String gender;
     private LocalDateTime birthDate;
+    @JsonIgnore
+    private int age;
 }

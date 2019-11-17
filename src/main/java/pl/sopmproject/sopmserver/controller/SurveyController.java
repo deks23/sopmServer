@@ -26,6 +26,7 @@ public class SurveyController {
     private static final String GET_MOST_POPULAR = "/survey/getMostPopular";
     private static final String GET_SURVEY_BY_ID = "/survey/get/{surveyId}";
     private static final String GET_FROM_NEIGHBORHOOD = "/survey/getFromNeighborhood";
+    private static final String GET_USER_SURVEYS = "/survey/getUserSurveys";
 
     @Autowired
     private SurveyService surveyService;
@@ -92,6 +93,17 @@ public class SurveyController {
                 request.getRadius(),
                 request.getLongitude(),
                 request.getLatitude());
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @RequestMapping(value = GET_USER_SURVEYS)
+    @GetMapping
+    public ResponseEntity getUSerSurveys(@RequestHeader Map<String, String> headers){
+        if (!headers.containsKey(Constants.JWT)) {
+            Response response = Response.builder().status(false).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        Response response = surveyService.getUserSurveys(headers.get(Constants.JWT));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }
