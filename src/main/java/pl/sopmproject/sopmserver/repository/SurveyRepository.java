@@ -23,6 +23,9 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     @Query(value = "SELECT s FROM Survey s WHERE s.id = ?1")
     public Survey findById(int surveyId);
 
+    @Query(value = "SELECT s FROM Survey s WHERE s.id = (SELECT o.surveyId FROM Option o WHERE o.id = (SELECT v.optionId FROM Vote v WHERE v.userId = ?1))")
+    public Survey getSurveysWhereUserVoted(int userId);
+
     @Query(value = "SELECT s.id, s.counter, s.create_date, s.finish_time, s.latitude, s.longitude, s.question, s.category_id, user_id FROM (\n" +
             "        SELECT *, (\n" +
             "        6371 * acos (\n" +

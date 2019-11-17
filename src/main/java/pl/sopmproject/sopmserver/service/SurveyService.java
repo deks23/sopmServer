@@ -104,6 +104,17 @@ public class SurveyService {
         return generateResponse(surveyList);
     }
 
+    public Response getSurveysWhereUserVoted(String jwt) {
+        User user = null;
+        try {
+            user = userService.getUser(jwt);
+        } catch (JwtParseException e) {
+            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
+        List<Survey> surveyList = surveyRepository.getSurveysWhereUserVoted(user.getId());
+        return generateResponse(surveyList);
+    }
+
     private void persistData(List<Option> optionList, Survey survey) {
         optionRepository.saveAll(optionList);
         surveyRepository.save(survey);
