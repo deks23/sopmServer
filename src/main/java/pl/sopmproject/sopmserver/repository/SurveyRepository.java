@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pl.sopmproject.sopmserver.model.entity.Survey;
-import pl.sopmproject.sopmserver.model.entity.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +37,4 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
             ") AS s\n" +
             "WHERE s.distance <:radius AND s.finish_time > :now", nativeQuery = true)
     public List<Survey> getSurveysFromNeighborhood(@Param("radius")double radius, @Param("longitude")double longitude, @Param("latitude")double latitude, @Param("now") LocalDateTime now);
-
-    public List<Survey> findByOwner(User owner);
 }
