@@ -6,17 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.exception.SurveyNotFoundException;
-import pl.sopmproject.sopmserver.model.entity.Category;
-import pl.sopmproject.sopmserver.model.entity.Option;
-import pl.sopmproject.sopmserver.model.entity.Survey;
-import pl.sopmproject.sopmserver.model.entity.User;
+import pl.sopmproject.sopmserver.model.entity.*;
 import pl.sopmproject.sopmserver.model.response.AddSurveyResponse;
 import pl.sopmproject.sopmserver.model.response.GetSurveysResponse;
 import pl.sopmproject.sopmserver.model.response.Response;
-import pl.sopmproject.sopmserver.repository.CategoryRepository;
-import pl.sopmproject.sopmserver.repository.OptionRepository;
-import pl.sopmproject.sopmserver.repository.SurveyRepository;
-import pl.sopmproject.sopmserver.repository.UserRepository;
+import pl.sopmproject.sopmserver.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,6 +30,8 @@ public class SurveyService {
     private SurveyRepository surveyRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private VoteRepository voteRepository;
 
     @Transactional
     public Response addNewSurvey(
@@ -91,6 +87,45 @@ public class SurveyService {
     public Response getSurveysFromNeighborhood(double radius, double longitude, double latitude){
         List<Survey> surveyList = surveyRepository.getSurveysFromNeighborhood(radius, longitude, latitude, LocalDateTime.now());
         return generateResponse(surveyList);
+    }
+
+
+    public Response getSurveysInWhichUserDidntTookPart(String jwt){
+        User user = null;
+        try {
+            user = userService.getUser(jwt);
+        } catch (JwtParseException e) {
+            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<Long> votedIdsList = getVotedSurveysIds(getVotedSurveys(user));
+        List<Survey> notVotedSurveyList = surveyRepository.getNotVotedSurveys(votedIdsList);
+
+        return generateResponse(notVotedSurveyList);
+    }
+
+    private List<Long> getVotedSurveysIds(List<Survey> surveyList) {
+        List<Long> votedIds = new ArrayList<>();
+        for (Survey survey : surveyList){
+            votedIds.add(survey.getId());
+        }
+        return votedIds;
+    }
+
+    public Response getSurveysInWhichUserTookPart(String jwt){
+        User user = null;
+        try {
+            user = userService.getUser(jwt);
+        } catch (JwtParseException e) {
+            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
+        List<Survey> surveyList = getVotedSurveys(user);
+        return generateResponse(surveyList);
+    }
+
+    private List<Survey> getVotedSurveys(User user) {
+        List<Vote> voteList = voteRepository.findByUser(user);
+        return surveyRepository.findByAnswersIn(voteList);
     }
 
     public Response getUserSurveys(String jwt) {
