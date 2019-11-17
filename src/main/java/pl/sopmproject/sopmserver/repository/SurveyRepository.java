@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pl.sopmproject.sopmserver.model.entity.Survey;
 import pl.sopmproject.sopmserver.model.entity.User;
+import pl.sopmproject.sopmserver.model.entity.Vote;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,4 +41,9 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     public List<Survey> getSurveysFromNeighborhood(@Param("radius")double radius, @Param("longitude")double longitude, @Param("latitude")double latitude, @Param("now") LocalDateTime now);
 
     public List<Survey> findByOwner(User owner);
+
+    public List<Survey> findByAnswersIn(List<Vote> voteList);
+
+    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds", nativeQuery = true)
+    public List<Survey> getNotVotedSurveys(@Param("votedIds") List<Long> votedSurveys);
 }

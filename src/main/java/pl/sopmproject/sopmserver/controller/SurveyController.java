@@ -27,6 +27,9 @@ public class SurveyController {
     private static final String GET_SURVEY_BY_ID = "/survey/get/{surveyId}";
     private static final String GET_FROM_NEIGHBORHOOD = "/survey/getFromNeighborhood";
     private static final String GET_USER_SURVEYS = "/survey/getUserSurveys";
+    private static final String GET_SURVEYS_USER_DIDNT_ANSWERED = "/survey/getNotAnswered";
+    private static final String GET_SURVEYS_USER_ANSWERED = "/survey/getAnswered";
+
 
     @Autowired
     private SurveyService surveyService;
@@ -106,4 +109,27 @@ public class SurveyController {
         Response response = surveyService.getUserSurveys(headers.get(Constants.JWT));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
+
+    @RequestMapping(value = GET_SURVEYS_USER_DIDNT_ANSWERED)
+    @GetMapping
+    public ResponseEntity getSurveysUserDidntAnswered(@RequestHeader Map<String, String> headers){
+        if (!headers.containsKey(Constants.JWT)) {
+            Response response = Response.builder().status(false).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        Response response = surveyService.getSurveysInWhichUserDidntTookPart(headers.get(Constants.JWT));
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
+    @RequestMapping(value = GET_SURVEYS_USER_ANSWERED)
+    @GetMapping
+    public ResponseEntity getSurveysUserAnswered(@RequestHeader Map<String, String> headers){
+        if (!headers.containsKey(Constants.JWT)) {
+            Response response = Response.builder().status(false).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        Response response = surveyService.getSurveysInWhichUserTookPart(headers.get(Constants.JWT));
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
+    }
+
 }
