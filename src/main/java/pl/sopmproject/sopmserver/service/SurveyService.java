@@ -125,7 +125,7 @@ public class SurveyService {
 
     private List<Survey> getVotedSurveys(User user) {
         List<Vote> voteList = voteRepository.findByUser(user);
-        return surveyRepository.findByAnswersIn(voteList);
+        return surveyRepository.findByAnswersInOrderByCreateDateDesc(voteList);
     }
 
     public Response getUserSurveys(String jwt) {
@@ -135,7 +135,7 @@ public class SurveyService {
         } catch (JwtParseException e) {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
-        List<Survey> surveyList = surveyRepository.findByOwner(user);
+        List<Survey> surveyList = surveyRepository.findByOwnerOrderByCreateDateDesc(user);
         return generateResponse(surveyList);
     }
 

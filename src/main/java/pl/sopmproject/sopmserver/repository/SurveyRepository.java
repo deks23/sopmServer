@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    @Query(value = "SELECT s FROM Survey s WHERE s.finishTime > ?1")
+    @Query(value = "SELECT s FROM Survey s WHERE s.finishTime > ?1 ORDER BY s.createDate DESC")
     public List<Survey> getAllActiveSurveys(LocalDateTime now);
 
-    @Query(value = "SELECT s FROM Survey s WHERE s.finishTime < ?1")
+    @Query(value = "SELECT s FROM Survey s WHERE s.finishTime < ?1 ORDER BY s.createDate DESC")
     public List<Survey> getFinishedSurveys(LocalDateTime now);
 
     @Query(value = "SELECT s FROM Survey s WHERE s.finishTime > ?1 ORDER BY s.counter DESC")
@@ -37,13 +37,13 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
             "    ) AS distance\n" +
             "    FROM surveys\n" +
             ") AS s\n" +
-            "WHERE s.distance <:radius AND s.finish_time > :now", nativeQuery = true)
+            "WHERE s.distance <:radius AND s.finish_time > :now ORDER BY s.createDate DESC", nativeQuery = true)
     public List<Survey> getSurveysFromNeighborhood(@Param("radius")double radius, @Param("longitude")double longitude, @Param("latitude")double latitude, @Param("now") LocalDateTime now);
 
-    public List<Survey> findByOwner(User owner);
+    public List<Survey> findByOwnerOrderByCreateDateDesc(User owner);
 
-    public List<Survey> findByAnswersIn(List<Vote> voteList);
+    public List<Survey> findByAnswersInOrderByCreateDateDesc(List<Vote> voteList);
 
-    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds", nativeQuery = true)
+    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds ORDER BY s.createDate DESC", nativeQuery = true)
     public List<Survey> getNotVotedSurveys(@Param("votedIds") List<Long> votedSurveys);
 }
