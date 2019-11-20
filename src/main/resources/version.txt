@@ -1,3 +1,6 @@
+===0.4.3
+    -changed approach to parsing joda Time to java Time
+    -fixes in creating survey
 ===0.4.2
     -ordering surveys from newest
 ===0.4.1
