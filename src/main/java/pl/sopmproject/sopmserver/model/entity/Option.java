@@ -24,6 +24,7 @@ public class Option {
     private String value;
     private LocalDateTime createDate;
     @OneToOne(mappedBy = "option")
+    @JsonIgnore
     private OptionResult result;
 
 }

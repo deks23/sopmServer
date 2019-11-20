@@ -1,6 +1,8 @@
 package pl.sopmproject.sopmserver.util;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class DateConverter {
 
@@ -26,5 +28,9 @@ public class DateConverter {
                 dateTime.getMinute(),
                 dateTime.getSecond(),
                 dateTime.getNano() / milliToNanoConst);
+    }
+
+    public static LocalDateTime milisToLocalDateTime(Long milis){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(milis), ZoneId.systemDefault());
     }
 }

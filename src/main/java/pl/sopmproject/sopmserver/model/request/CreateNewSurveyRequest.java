@@ -15,5 +15,5 @@ public class CreateNewSurveyRequest {
     private long category;
     private double latitude;
     private double longitude;
-    private LocalDateTime finishTime;
+    private Object finishTime;
 }

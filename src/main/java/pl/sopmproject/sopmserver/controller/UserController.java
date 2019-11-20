@@ -16,6 +16,7 @@ import pl.sopmproject.sopmserver.service.UserDataService;
 import pl.sopmproject.sopmserver.service.UserService;
 import pl.sopmproject.sopmserver.util.DateConverter;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -73,7 +74,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
         String jwt = headers.get(Constants.JWT);
-        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), DateConverter.jodaToJavaTime(updateDataRequest.getBirthday()));
+        Long milis = (Long)((LinkedHashMap) updateDataRequest.getBirthday()).get("iLocalMillis");
+        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), DateConverter.milisToLocalDateTime(milis));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }

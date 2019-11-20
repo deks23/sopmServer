@@ -8,6 +8,6 @@ import org.joda.time.LocalDateTime;
 @Getter
 @Setter
 public class UpdateDataRequest {
-    private LocalDateTime birthday;
+    private Object birthday;
     private String gender;
 }

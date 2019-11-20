@@ -13,6 +13,7 @@ import pl.sopmproject.sopmserver.service.CategoryService;
 import pl.sopmproject.sopmserver.service.SurveyService;
 import pl.sopmproject.sopmserver.util.DateConverter;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -49,6 +50,8 @@ public class SurveyController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
+        Long milis = (Long)((LinkedHashMap) request.getFinishTime()).get("iLocalMillis");
+
         Response response = surveyService.addNewSurvey(
                 headers.get(Constants.JWT),
                 request.getQuestion(),
@@ -56,7 +59,7 @@ public class SurveyController {
                 request.getCategory(),
                 request.getLongitude(),
                 request.getLatitude(),
-                DateConverter.jodaToJavaTime(request.getFinishTime())
+                DateConverter.milisToLocalDateTime(milis)
         );
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }

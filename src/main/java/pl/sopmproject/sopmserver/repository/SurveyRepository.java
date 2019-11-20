@@ -37,13 +37,13 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
             "    ) AS distance\n" +
             "    FROM surveys\n" +
             ") AS s\n" +
-            "WHERE s.distance <:radius AND s.finish_time > :now ORDER BY s.createDate DESC", nativeQuery = true)
+            "WHERE s.distance <:radius AND s.finish_time > :now ORDER BY s.create_date DESC", nativeQuery = true)
     public List<Survey> getSurveysFromNeighborhood(@Param("radius")double radius, @Param("longitude")double longitude, @Param("latitude")double latitude, @Param("now") LocalDateTime now);
 
     public List<Survey> findByOwnerOrderByCreateDateDesc(User owner);
 
     public List<Survey> findByAnswersInOrderByCreateDateDesc(List<Vote> voteList);
 
-    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds ORDER BY s.createDate DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds ORDER BY s.create_date DESC", nativeQuery = true)
     public List<Survey> getNotVotedSurveys(@Param("votedIds") List<Long> votedSurveys);
 }

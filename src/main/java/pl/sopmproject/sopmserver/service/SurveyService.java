@@ -32,16 +32,19 @@ public class SurveyService {
     private CategoryRepository categoryRepository;
     @Autowired
     private VoteRepository voteRepository;
+    @Autowired
+    private OptionResultRepository optionResultRepository;
 
     @Transactional
     public Response addNewSurvey(
             String jwt,
             String question,
             List<String> answerOptions,
-            long category,
+            long categoryId,
             double latitude,
             double longitude,
-            LocalDateTime finishTime) {
+            LocalDateTime finishTime
+    ) {
         User user = null;
         try {
             user = userService.getUser(jwt);
@@ -49,13 +52,26 @@ public class SurveyService {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Option> optionList = new ArrayList();
         LocalDateTime now = LocalDateTime.now();
-        Category categoryEntity = categoryRepository.getOne(category);
-        Survey survey = createSurvey(question, latitude, longitude, finishTime, user, optionList, now, categoryEntity);
-        fulfilOptionList(answerOptions, optionList, now, survey);
-        persistData(optionList, survey);
+        Category category = categoryRepository.getOne(categoryId);
+        Survey survey = createSurvey(question, latitude, longitude, finishTime, user, now, category);
+        List<Option> options = generateOptions(answerOptions, now, survey);
+        List<OptionResult> optionResults = generateOptionResults(options, survey);
+        persistData(options, survey, optionResults);
         return AddSurveyResponse.addSurveyResponseBuilder().status(true).httpStatus(HttpStatus.OK).build();
+    }
+
+    private List<OptionResult> generateOptionResults(List<Option> optionList, Survey survey) {
+        List<OptionResult> optionResults = new ArrayList<>();
+        for(Option option : optionList){
+            OptionResult optionResult = new OptionResult();
+            optionResult.setOption(option);
+            optionResult.setVote(survey);
+            optionResults.add(optionResult);
+            optionResult.setNumberOfVotes(0L);
+            option.setResult(optionResult);
+        }
+        return optionResults;
     }
 
     public Response getAllActiveSurveys(){
@@ -97,10 +113,8 @@ public class SurveyService {
         } catch (JwtParseException e) {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
-
         List<Long> votedIdsList = getVotedSurveysIds(getVotedSurveys(user));
         List<Survey> notVotedSurveyList = surveyRepository.getNotVotedSurveys(votedIdsList);
-
         return generateResponse(notVotedSurveyList);
     }
 
@@ -139,9 +153,10 @@ public class SurveyService {
         return generateResponse(surveyList);
     }
 
-    private void persistData(List<Option> optionList, Survey survey) {
+    private void persistData(List<Option> optionList, Survey survey, List<OptionResult> optionResults) {
         optionRepository.saveAll(optionList);
         surveyRepository.save(survey);
+        optionResultRepository.saveAll(optionResults);
     }
 
     private Response generateResponse(List<Survey> surveyList) {
@@ -163,7 +178,8 @@ public class SurveyService {
             double longitude,
             LocalDateTime finishTime,
             User user,
-            List<Option> optionList, LocalDateTime now, Category categoryEntity
+            LocalDateTime now,
+            Category categoryEntity
     ) {
         return Survey.builder()
                 .owner(user)
@@ -172,25 +188,26 @@ public class SurveyService {
                 .longitude(longitude)
                 .latitude(latitude)
                 .counter(0L)
-                .options(optionList)
                 .createDate(now)
                 .category(categoryEntity)
                 .build();
     }
 
-    private void fulfilOptionList(
+    private List<Option> generateOptions(
             List<String> answerOptions,
-            List<Option> optionList,
             LocalDateTime now,
             Survey survey
     ) {
+        List<Option> options = new ArrayList<>();
         for (String option : answerOptions) {
             Option optionEntity = new Option();
             optionEntity.setValue(option);
             optionEntity.setSurvey(survey);
             optionEntity.setCreateDate(now);
-            optionList.add(optionEntity);
+            options.add(optionEntity);
         }
+        survey.setOptions(options);
+        return options;
     }
 
     public Survey findSurvey(int surveyId) throws SurveyNotFoundException {
