@@ -114,8 +114,16 @@ public class SurveyService {
             return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
         List<Long> votedIdsList = getVotedSurveysIds(getVotedSurveys(user));
-        List<Survey> notVotedSurveyList = surveyRepository.getNotVotedSurveys(votedIdsList);
+        List<Survey> notVotedSurveyList = getNotAnsweredSurveys(votedIdsList);
         return generateResponse(notVotedSurveyList);
+    }
+
+    private List<Survey> getNotAnsweredSurveys(List<Long> votedIdsList) {
+        if (votedIdsList.isEmpty()) {
+            return surveyRepository.getAllActiveSurveys(LocalDateTime.now());
+        } else {
+            return surveyRepository.getNotVotedSurveys(votedIdsList);
+        }
     }
 
     private List<Long> getVotedSurveysIds(List<Survey> surveyList) {
