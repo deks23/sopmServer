@@ -1,4 +1,4 @@
-package pl.sopmproject.sopmserver;
+package pl.sopmproject.sopmserver.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

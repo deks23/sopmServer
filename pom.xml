@@ -46,7 +46,7 @@
       <!--<artifactId>h2</artifactId>  -->
       <!--<scope>runtime</scope> -->
     <!--</dependency>-->
-    <!--<dependency>
+   <!-- <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <scope>runtime</scope>
@@ -125,6 +125,13 @@
           <artifactId>joda-time</artifactId>
           <version>2.10.5</version>
       </dependency>
+
+    <dependency>
+      <groupId>org.modelmapper</groupId>
+      <artifactId>modelmapper</artifactId>
+      <version>2.3.5</version>
+    </dependency>
+
 
   </dependencies>  
   <build> 

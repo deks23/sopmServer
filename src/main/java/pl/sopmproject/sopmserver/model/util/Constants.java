@@ -10,4 +10,5 @@ public class Constants {
     public static final String USER_NOT_FOUND = "User not found. id= ";
     public static final String OPTION_ID_NOT_FOUND = "Passed option id not found. id= ";
     public static final String OPTION_NOT_FOUND = "Option not found";
+    public static final String SURVEY_NOT_FOUND = "Survey not found";
 }
