@@ -41,8 +41,8 @@ public class SurveyService {
             String question,
             List<String> answerOptions,
             long categoryId,
-            double latitude,
             double longitude,
+            double latitude,
             LocalDateTime finishTime
     ) {
         User user = null;
