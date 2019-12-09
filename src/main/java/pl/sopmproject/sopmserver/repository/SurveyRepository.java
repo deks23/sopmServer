@@ -44,6 +44,6 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
 
     public List<Survey> findByAnswersInOrderByCreateDateDesc(List<Vote> voteList);
 
-    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds ORDER BY s.create_date DESC", nativeQuery = true)
-    public List<Survey> getNotVotedSurveys(@Param("votedIds") List<Long> votedSurveys);
+    @Query(value = "SELECT * FROM surveys as s WHERE s.id NOT IN :votedIds AND s.finish_time > :now ORDER BY s.create_date DESC", nativeQuery = true)
+    public List<Survey> getNotVotedSurveys(@Param("votedIds") List<Long> votedSurveys, @Param("now") LocalDateTime now);
 }

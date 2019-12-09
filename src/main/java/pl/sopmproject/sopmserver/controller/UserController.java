@@ -68,14 +68,9 @@ public class UserController {
             @RequestHeader Map<String, String> headers,
             @RequestBody UpdateDataRequest updateDataRequest
     ) {
-        Response response = null;
-        if (!headers.containsKey(Constants.JWT)) {
-            response = Response.builder().status(false).responseMessage(Constants.TOKEN_NOT_PRESENT).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
         String jwt = headers.get(Constants.JWT);
         Long milis = (Long)((LinkedHashMap) updateDataRequest.getBirthday()).get("iLocalMillis");
-        response = userDataService.updateUserData(jwt, updateDataRequest.getGender(), DateConverter.milisToLocalDateTime(milis));
+        Response response  = userDataService.updateUserData(jwt, updateDataRequest.getGender(), DateConverter.milisToLocalDateTime(milis));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }

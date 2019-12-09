@@ -26,10 +26,6 @@ public class VoteController {
             @RequestBody CreateNewVoteRequest request
     ) {
         Response response = null;
-        if (!headers.containsKey(Constants.JWT)) {
-            response = Response.builder().status(false).responseMessage(Constants.TOKEN_NOT_PRESENT).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
         try {
             response = voteService.addNewVote(
                     headers.get(Constants.JWT),

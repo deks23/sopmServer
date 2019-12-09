@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SurveyService {
@@ -44,14 +45,8 @@ public class SurveyService {
             double longitude,
             double latitude,
             LocalDateTime finishTime
-    ) {
-        User user = null;
-        try {
-            user = userService.getUser(jwt);
-        } catch (JwtParseException e) {
-            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
-        }
-
+    ) throws JwtParseException {
+        User user = userService.getUser(jwt);
         LocalDateTime now = LocalDateTime.now();
         Category category = categoryRepository.getOne(categoryId);
         Survey survey = createSurvey(question, latitude, longitude, finishTime, user, now, category);
@@ -74,14 +69,18 @@ public class SurveyService {
         return optionResults;
     }
 
-    public Response getAllActiveSurveys(){
+    public Response getAllActiveSurveys(String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Survey> surveyList = surveyRepository.getAllActiveSurveys(LocalDateTime.now());
-        return generateResponse(surveyList);
+        List<Survey> resultList = removeAnsweredSurveysFromList(user, surveyList);
+        return generateResponse(resultList);
     }
 
-    public Response getMostPopularSurveys(){
+    public Response getMostPopularSurveys(String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Survey> surveyList = surveyRepository.getAllActiveSurveysWithMostAnswers(LocalDateTime.now());
-        return generateResponse(surveyList);
+        List<Survey> resultList = removeAnsweredSurveysFromList(user, surveyList);
+        return generateResponse(resultList);
     }
 
     public Response getSurveyById(Long surveyId) {
@@ -100,19 +99,21 @@ public class SurveyService {
         }
     }
 
-    public Response getSurveysFromNeighborhood(double radius, double longitude, double latitude){
+    public Response getSurveysFromNeighborhood(double radius, double longitude, double latitude, String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Survey> surveyList = surveyRepository.getSurveysFromNeighborhood(radius, longitude, latitude, LocalDateTime.now());
-        return generateResponse(surveyList);
+        List<Survey> resultList = removeAnsweredSurveysFromList(user, surveyList);
+        return generateResponse(resultList);
+    }
+
+    private List<Survey> removeAnsweredSurveysFromList(User user, List<Survey> surveyList) {
+        List<Survey> answeredSurveys = getVotedSurveys(user);
+        return surveyList.stream().filter(e -> !answeredSurveys.contains(e)).collect(Collectors.toList());
     }
 
 
-    public Response getSurveysInWhichUserDidntTookPart(String jwt){
-        User user = null;
-        try {
-            user = userService.getUser(jwt);
-        } catch (JwtParseException e) {
-            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
-        }
+    public Response getSurveysInWhichUserDidntTookPart(String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Long> votedIdsList = getVotedSurveysIds(getVotedSurveys(user));
         List<Survey> notVotedSurveyList = getNotAnsweredSurveys(votedIdsList);
         return generateResponse(notVotedSurveyList);
@@ -122,7 +123,7 @@ public class SurveyService {
         if (votedIdsList.isEmpty()) {
             return surveyRepository.getAllActiveSurveys(LocalDateTime.now());
         } else {
-            return surveyRepository.getNotVotedSurveys(votedIdsList);
+            return surveyRepository.getNotVotedSurveys(votedIdsList, LocalDateTime.now());
         }
     }
 
@@ -134,13 +135,8 @@ public class SurveyService {
         return votedIds;
     }
 
-    public Response getSurveysInWhichUserTookPart(String jwt){
-        User user = null;
-        try {
-            user = userService.getUser(jwt);
-        } catch (JwtParseException e) {
-            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
-        }
+    public Response getSurveysInWhichUserTookPart(String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Survey> surveyList = getVotedSurveys(user);
         return generateResponse(surveyList);
     }
@@ -150,13 +146,8 @@ public class SurveyService {
         return surveyRepository.findByAnswersInOrderByCreateDateDesc(voteList);
     }
 
-    public Response getUserSurveys(String jwt) {
-        User user = null;
-        try {
-            user = userService.getUser(jwt);
-        } catch (JwtParseException e) {
-            return Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
-        }
+    public Response getUserSurveys(String jwt) throws JwtParseException {
+        User user  = userService.getUser(jwt);
         List<Survey> surveyList = surveyRepository.findByOwnerOrderByCreateDateDesc(user);
         return generateResponse(surveyList);
     }

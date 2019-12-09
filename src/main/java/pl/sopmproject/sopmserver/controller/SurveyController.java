@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.sopmproject.sopmserver.exception.JwtParseException;
 import pl.sopmproject.sopmserver.model.request.CreateNewSurveyRequest;
 import pl.sopmproject.sopmserver.model.request.GetSurveysFromNeighborhoodRequest;
 import pl.sopmproject.sopmserver.model.response.Response;
@@ -45,22 +46,21 @@ public class SurveyController {
             @RequestHeader Map<String, String> headers,
             @RequestBody CreateNewSurveyRequest request
     ) {
-        if (!headers.containsKey(Constants.JWT)) {
-            Response response = Response.builder().status(false).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
         Long milis = (Long)((LinkedHashMap) request.getFinishTime()).get("iLocalMillis");
-
-        Response response = surveyService.addNewSurvey(
-                headers.get(Constants.JWT),
-                request.getQuestion(),
-                request.getAnswerOptions(),
-                request.getCategory(),
-                request.getLongitude(),
-                request.getLatitude(),
-                DateConverter.milisToLocalDateTime(milis)
-        );
+        Response response = null;
+        try {
+            response = surveyService.addNewSurvey(
+                    headers.get(Constants.JWT),
+                    request.getQuestion(),
+                    request.getAnswerOptions(),
+                    request.getCategory(),
+                    request.getLongitude(),
+                    request.getLatitude(),
+                    DateConverter.milisToLocalDateTime(milis)
+            );
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
@@ -73,15 +73,25 @@ public class SurveyController {
 
     @RequestMapping(value = GET_ALL_ACTIVE_SURVEYS)
     @GetMapping
-    public ResponseEntity getAll(){
-        Response response = surveyService.getAllActiveSurveys();
+    public ResponseEntity getAll(@RequestHeader Map<String, String> headers){
+        Response response = null;
+        try {
+            response = surveyService.getAllActiveSurveys(headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
     @RequestMapping(value = GET_MOST_POPULAR)
     @GetMapping
-    public ResponseEntity getMostPopular(){
-        Response response = surveyService.getMostPopularSurveys();
+    public ResponseEntity getMostPopular(@RequestHeader Map<String, String> headers){
+        Response response = null;
+        try {
+            response = surveyService.getMostPopularSurveys(headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
@@ -94,44 +104,56 @@ public class SurveyController {
 
     @RequestMapping(value = GET_FROM_NEIGHBORHOOD)
     @PostMapping
-    public ResponseEntity getSurveyById(@RequestBody GetSurveysFromNeighborhoodRequest request) {
-        Response response = surveyService.getSurveysFromNeighborhood(
-                request.getRadius(),
-                request.getLongitude(),
-                request.getLatitude());
+    public ResponseEntity getSurveyById(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody GetSurveysFromNeighborhoodRequest request
+    ) {
+        Response response = null;
+        try {
+            response = surveyService.getSurveysFromNeighborhood(
+                    request.getRadius(),
+                    request.getLongitude(),
+                    request.getLatitude(),
+                    headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
     @RequestMapping(value = GET_USER_SURVEYS)
     @GetMapping
     public ResponseEntity getUSerSurveys(@RequestHeader Map<String, String> headers){
-        if (!headers.containsKey(Constants.JWT)) {
-            Response response = Response.builder().status(false).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        Response response = null;
+        try {
+            response = surveyService.getUserSurveys(headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
-        Response response = surveyService.getUserSurveys(headers.get(Constants.JWT));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
     @RequestMapping(value = GET_SURVEYS_USER_DIDNT_ANSWERED)
     @GetMapping
     public ResponseEntity getSurveysUserDidntAnswered(@RequestHeader Map<String, String> headers){
-        if (!headers.containsKey(Constants.JWT)) {
-            Response response = Response.builder().status(false).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        Response response = null;
+        try {
+            response = surveyService.getSurveysInWhichUserDidntTookPart(headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
-        Response response = surveyService.getSurveysInWhichUserDidntTookPart(headers.get(Constants.JWT));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
     @RequestMapping(value = GET_SURVEYS_USER_ANSWERED)
     @GetMapping
     public ResponseEntity getSurveysUserAnswered(@RequestHeader Map<String, String> headers){
-        if (!headers.containsKey(Constants.JWT)) {
-            Response response = Response.builder().status(false).build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        Response response = null;
+        try {
+            response = surveyService.getSurveysInWhichUserTookPart(headers.get(Constants.JWT));
+        } catch (JwtParseException e) {
+            response = Response.builder().status(false).httpStatus(HttpStatus.FORBIDDEN).build();
         }
-        Response response = surveyService.getSurveysInWhichUserTookPart(headers.get(Constants.JWT));
         return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 
